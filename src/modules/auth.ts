@@ -51,16 +51,15 @@ export const protect = (req, res, next) => {
 //to protect the routes 
 export const protectRoute = (req, res, next) => {
     // const token = req.headers.authorization.split(' ')[1]
-    const token = req.header('Authorization').replace('Bearer ', '');
+    try {
+       const token = req.header('Authorization').replace('Bearer ', '');
   if (!token) {
     return res.status(401).send({ error: 'Access denied. No token provided.' });
   }
-  try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;
       next();
   } catch (error) {
-      console.log(error.message)
-    res.status(500).send({ error: 'Invalid token.' });
+    res.status(500).json({ Error_Messaage: `Error with internal server or ${error.message} `});
   }
 };
